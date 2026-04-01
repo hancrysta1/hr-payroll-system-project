@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="가산수당 — DB에서 조회한 설정(ON/OFF)과 가산율에 따라 적용" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-03-31T13:23:51.130Z" hostname="hancrystalui-MacBookAir.local" time="0.026">
+  <properties/>
+  <testcase name="야간수당: 시급 x 가산율(DB) x 야간시간" classname="example.salary.DailySalaryCalculationTest$Allowances" time="0.001"/>
+  <testcase name="8시간 이하면 연장수당 없음 — 설정이 ON이어도 조건 미충족" classname="example.salary.DailySalaryCalculationTest$Allowances" time="0.0"/>
+  <testcase name="연장수당: 8시간 초과분에만 적용" classname="example.salary.DailySalaryCalculationTest$Allowances" time="0.0"/>
+  <testcase name="야간 + 연장 + 휴일 중복 적용" classname="example.salary.DailySalaryCalculationTest$Allowances" time="0.001"/>
+  <testcase name="지점별 커스텀 가산율 적용 — 70%로 설정된 경우" classname="example.salary.DailySalaryCalculationTest$Allowances" time="0.001"/>
+  <testcase name="휴일수당: 휴일 근무 시 가산율 적용" classname="example.salary.DailySalaryCalculationTest$Allowances" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

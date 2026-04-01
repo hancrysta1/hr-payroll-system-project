@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="세금 차감" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-03-31T13:23:51.124Z" hostname="hancrystalui-MacBookAir.local" time="0.001">
+  <properties/>
+  <testcase name="3.3% 원천징수" classname="example.salary.DailySalaryCalculationTest$Tax" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

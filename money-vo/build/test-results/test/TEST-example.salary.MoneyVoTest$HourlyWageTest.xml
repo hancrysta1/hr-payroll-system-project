@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="HourlyWage — 급여 타입별 통상시급 계산" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-03-31T13:23:51.162Z" hostname="hancrystalui-MacBookAir.local" time="0.004">
+  <properties/>
+  <testcase name="시급제: 금액 그대로" classname="example.salary.MoneyVoTest$HourlyWageTest" time="0.001"/>
+  <testcase name="월급제: 월급 2,090,000원 ÷ 209시간 = 시급 10,000원" classname="example.salary.MoneyVoTest$HourlyWageTest" time="0.0"/>
+  <testcase name="일급제: 일급 80,000원 ÷ 8시간 = 시급 10,000원" classname="example.salary.MoneyVoTest$HourlyWageTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

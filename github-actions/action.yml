@@ -1,0 +1,102 @@
+# CI/CD 파이프라인 — 구조 요약
+# 원본에서 시크릿 변수 상세를 제거하고 흐름만 남긴 버전.
+
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-22.04
+    steps:
+
+      # ① 체크아웃 + JDK 설정
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # ② 변경된 서비스 감지 (7개 서비스 중 변경분만)
+      - name: Get changed files
+        id: changes
+        run: |
+          git fetch origin main
+          git diff --name-only origin/main...HEAD > changed_files.txt
+          cat changed_files.txt
+
+      # ③ Feign DTO 호환성 검증 (모든 PR에서 항상 실행)
+      #    Provider DTO → JSON 자동 생성 → Consumer DTO 역직렬화 검증
+      #    실패 시 이후 빌드/배포 전체 차단
+      - name: Feign Client DTO contract check
+        run: |
+          bash scripts/generate-contract-fixtures.sh
+          bash scripts/feign-contract-check.sh
+
+      # ④ 서비스별 변경 감지
+      - name: Check if user-service changed
+        id: user_service_changed
+        run: |
+          if grep -q "^user-service/" changed_files.txt; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+      # (branch-service, billing-service, workpay-service, notification-service,
+      #  apigateway-service, discovery-service도 동일 패턴)
+
+      # ⑤ 변경된 서비스만 빌드
+      - name: Build user-service
+        if: steps.user_service_changed.outputs.changed == 'true'
+        env:
+          # DB, JWT, OAuth, Mail 등 시크릿 주입 (GitHub Secrets)
+          DB_URL: ${{ secrets.DB_URL }}
+          # ... (서비스별 필요한 시크릿)
+        run: |
+          ./user-service/gradlew -p user-service clean build -x test
+          docker build -t user-service:latest ./user-service
+          docker save user-service:latest -o user-service.tar
+
+      # ⑥ 변경된 서비스만 테스트
+      - name: Test user-service
+        if: steps.user_service_changed.outputs.changed == 'true'
+        run: |
+          ./user-service/gradlew -p user-service test --no-daemon \
+            --tests 'com.example.integration.*'
+
+      - name: Test branch-service
+        if: steps.branch_service_changed.outputs.changed == 'true'
+        run: |
+          ./branch-service/gradlew -p branch-service test --no-daemon \
+            --tests 'com.example.integration.*'
+
+      - name: Test workpay-service
+        if: steps.workpay_service_changed.outputs.changed == 'true'
+        run: |
+          ./workpay-service/gradlew -p workpay-service test --no-daemon \
+            --tests 'com.example.salary.domain.*' \
+            --tests 'com.example.salary.service.*Test' \
+            --tests 'com.example.salary.integration.*' \
+            --tests 'com.example.salary.controller.*'
+
+      # ⑦ Docker 이미지 EC2 전송 + 카나리 배포
+      - name: Deploy to EC2
+        if: steps.user_service_changed.outputs.changed == 'true'
+        run: |
+          scp user-service.tar ec2-user@${{ secrets.EC2_HOST }}:/deploy/
+          ssh ec2-user@${{ secrets.EC2_HOST }} "
+            docker load -i /deploy/user-service.tar
+            bash /deploy/deploy-canary.sh user-service
+          "
+      # (각 서비스별 동일 패턴 — 변경된 서비스만 배포)
