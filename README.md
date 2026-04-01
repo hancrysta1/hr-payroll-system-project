@@ -1,22 +1,169 @@
-# HR 정산 — 매장 인력·급여 관리 SaaS
+# Manezy & Crewezy — 매장 관리 SaaS + 직원용 앱
 
-> 사장님은 웹에서 매장·직원을 관리하고, 직원은 앱에서 근무·급여를 확인하는 B2B HR 서비스.<br>
+> 사장님은 웹(Manezy)에서 매장을 관리하고, 직원은 앱(Crewezy)에서 근무·급여를 확인하는 B2B 서비스.<br>
 > 1유저 N지점 — 여러 매장을 운영하는 사장과, 여러 곳에서 일하는 알바생 모두 지원.<br>
-> 7개 서비스 분리 · 토스페이먼츠 빌링키 정기결제 · 카나리 무중단 배포 · 3계층 테스트 자동화 · 실서비스 운영 중.
+> 7개 서비스 분리 · 토스페이먼츠 정기결제 · 카나리 무중단 배포 · 3계층 테스트 자동화 · 실서비스 운영 중.
 <br>
 
-<!-- 캡쳐: 웹 대시보드 + 앱 화면 -->
-<!-- 캡쳐: GitHub contribution 그래프 (프라이빗 레포 참여 증명) -->
+<!-- 캡쳐: Manezy 웹 대시보드 + Crewezy 앱 화면 -->
 
 <br>
 
-## 성과 요약
+## 프로젝트 개요
 
-| | 지표 | Before | After |
-|---|---|---|---|
-| 1 | 정산 문의 | 반복 발생, 건당 30분+ 추적 | 0건 — 계산 근거 구조화 + 확정 시점 스냅샷 |
-| 2 | 결제↔DB 불일치율 | ~30% (Chaos 테스트) | 0% — 보상 트랜잭션 자동 복구 |
-| 3 | 테스트 / 배포 | 없음 / 다운타임 5~10분 | 3계층 자동 검증(도메인·시나리오·DTO 호환성) + 무중단 카나리 배포 |
+| 항목 | 내용 |
+|------|------|
+| 기간 | 2024.07 ~ 운영 중 |
+| 인원 | 백엔드 1인 (본인), 프론트 1인, 디자인 1인 |
+| 서비스 | Manezy(웹, 사장/관리자용) · Crewezy(앱, 직원용) |
+| 유저 구조 | 1유저 N지점 — 사장·관리자·직원 3단계 권한 × 지점별 급여 공개 설정 |
+| 배포 | AWS EC2 · Docker Compose · GitHub Actions CI/CD · 카나리 무중단 배포 |
+
+<br>
+
+## 기술 스택
+
+| 영역 | 기술 |
+|------|------|
+| Backend | ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?logo=springboot&logoColor=white) ![Java](https://img.shields.io/badge/Java-17-007396?logo=openjdk&logoColor=white) ![Spring Cloud](https://img.shields.io/badge/Spring_Cloud-Gateway_/_Eureka-6DB33F?logo=spring&logoColor=white) ![JPA](https://img.shields.io/badge/JPA-Hibernate-59666C?logo=hibernate&logoColor=white) ![OpenFeign](https://img.shields.io/badge/OpenFeign-HTTP_Client-6DB33F?logo=spring&logoColor=white) |
+| Database | ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white) ![RDS](https://img.shields.io/badge/AWS_RDS-Managed_DB-527FFF?logo=amazonrds&logoColor=white) |
+| Storage | ![S3](https://img.shields.io/badge/AWS_S3-Image_Upload-569A31?logo=amazons3&logoColor=white) |
+| Cache | ![Caffeine](https://img.shields.io/badge/Caffeine-JVM_Local_Cache-6DB33F) |
+| Message Queue | ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-Event_Driven-FF6600?logo=rabbitmq&logoColor=white) |
+| Payment | ![Toss Payments](https://img.shields.io/badge/Toss_Payments-Billing_Key-0064FF) |
+| Auth | ![JWT](https://img.shields.io/badge/JWT-Refresh_Token_Rotation-000000?logo=jsonwebtokens&logoColor=white) ![OAuth2](https://img.shields.io/badge/OAuth_2.0-Kakao_/_Naver_/_Google_/_Apple-EB5424) |
+| AI | ![OpenAI](https://img.shields.io/badge/OpenAI-Schedule_Parsing-412991?logo=openai&logoColor=white) |
+| Monitoring | ![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-E6522C?logo=prometheus&logoColor=white) ![Grafana](https://img.shields.io/badge/Grafana-Dashboard-F46800?logo=grafana&logoColor=white) ![Loki](https://img.shields.io/badge/Loki-Log_Aggregation-F46800) |
+| CI/CD | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-CI/CD-2088FF?logo=githubactions&logoColor=white) ![Docker](https://img.shields.io/badge/Docker_Compose-Container-2496ED?logo=docker&logoColor=white) |
+| Docs | ![Swagger](https://img.shields.io/badge/Swagger-API_Docs-85EA2D?logo=swagger&logoColor=black) |
+| Test | ![JUnit5](https://img.shields.io/badge/JUnit_5-3_Layer_Testing-25A162?logo=junit5&logoColor=white) ![JaCoCo](https://img.shields.io/badge/JaCoCo-Coverage-C21325) |
+
+<br>
+
+## 서비스 아키텍처
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              AWS EC2                                        │
+│                                                                             │
+│  ┌─────────────┐                                                            │
+│  │  Eureka     │  ← 서비스 디스커버리 (모든 서비스 등록/조회)                    │
+│  │  Discovery  │                                                            │
+│  └──────┬──────┘                                                            │
+│         │                                                                   │
+│  ┌──────┴──────────────────────────────────────────────────────┐            │
+│  │                    API Gateway                               │            │
+│  │  Spring Cloud Gateway                                        │            │
+│  │  ├─ JWT 검증 필터 (Bearer 토큰 → userId/email 추출)           │            │
+│  │  ├─ 초대 토큰 검증 필터 (로그인 JWT + 초대 JWT 이중 검증)      │            │
+│  │  ├─ 인증 정보 헤더 주입 (X-Authenticated-User-Id 등)          │            │
+│  │  └─ Eureka 기반 서비스 라우팅                                  │            │
+│  └──────┬──────────────────────────────────────────────────────┘            │
+│         │                                                                   │
+│         ├──────────────────┬──────────────────┬──────────────────┐          │
+│         │                  │                  │                  │          │
+│  ┌──────┴──────┐   ┌──────┴──────┐   ┌──────┴──────┐   ┌──────┴──────┐   │
+│  │ user        │   │ branch      │   │ workpay     │   │ billing     │   │
+│  │ service     │   │ service     │   │ service     │   │ service     │   │
+│  │             │   │             │   │             │   │             │   │
+│  │ OAuth 로그인 │   │ 지점·직원   │   │ 스케줄 관리  │   │ 토스페이먼츠 │   │
+│  │ JWT 발급    │   │ 권한 관리   │   │ 급여 정산    │   │ 정기결제     │   │
+│  │ 리프레시    │   │ S3 이미지   │   │ 수당/공제    │   │ 구독 관리    │   │
+│  │ 토큰 회전   │   │ 업로드      │   │ 급여 확정    │   │ 결제 원장    │   │
+│  └─────────────┘   └─────────────┘   └──────┬──────┘   └─────────────┘   │
+│                                              │                             │
+│                                       ┌──────┴──────┐                      │
+│                                       │notification │                      │
+│                                       │ service     │                      │
+│                                       │             │                      │
+│                                       │ FCM 푸시    │                      │
+│                                       │ BizM 알림톡 │                      │
+│                                       │ Email       │                      │
+│                                       └─────────────┘                      │
+│                                              ▲                             │
+│                                              │ RabbitMQ (비동기 이벤트)      │
+│                                              │                             │
+│  ┌──────────────────────────────────────────────────────────────────┐      │
+│  │  인프라                                                          │      │
+│  │  ├─ RabbitMQ      알림 비동기 발행                                │      │
+│  │  ├─ Prometheus    메트릭 수집                                     │      │
+│  │  ├─ Grafana       대시보드                                        │      │
+│  │  ├─ Loki          로그 수집                                       │      │
+│  │  └─ Promtail      로그 전송 에이전트                               │      │
+│  └──────────────────────────────────────────────────────────────────┘      │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+         │                        │                      │
+    ┌────┴────┐             ┌────┴────┐            ┌────┴────┐
+    │ AWS RDS │             │ AWS S3  │            │ 외부 API │
+    │ MySQL   │             │ 이미지   │            │ 토스/OAuth│
+    └─────────┘             └─────────┘            │ OpenAI   │
+                                                   └──────────┘
+```
+
+<br>
+
+## CI/CD · 배포 흐름
+
+```
+PR to main
+    │
+    ▼
+┌─ GitHub Actions CI ──────────────────────────────────────────┐
+│  ① 변경된 서비스 감지 (git diff로 7개 서비스 중 변경분만)       │
+│  ② Feign DTO 호환성 검증 (서비스 간 통신 깨짐 사전 차단)       │
+│  ③ 변경된 서비스만 빌드                                        │
+│  ④ 서비스별 테스트 실행 (실패 시 머지 차단)                     │
+│  ⑤ Docker 이미지 빌드 + Push                                  │
+└──────────────────────────────────┬───────────────────────────┘
+                                   │
+                                   ▼
+┌─ EC2 카나리 배포 (deploy-canary.sh) ─────────────────────────┐
+│  Phase 1  Docker 이미지 확인                                   │
+│  Phase 2  새 버전 컨테이너 기동 (기존 포트 + 1000)              │
+│  Phase 3  Health Check (2분간 10초 간격, /actuator/health)     │
+│  Phase 4  Eureka 등록 확인 (1분 대기)                          │
+│  Phase 5  트래픽 모니터링 (1분, 구/신버전 50:50)                │
+│  Phase 6  구버전 제거                                          │
+│  Phase 7  신버전 태그 전환                                     │
+│                                                                │
+│  ※ Phase 3~5 실패 시 → 자동 롤백 (구버전 계속 실행, 무중단)     │
+└────────────────────────────────────────────────────────────────┘
+```
+
+<br>
+
+## 프로젝트 구조
+
+```
+Server/
+├── apigateway-service/      # Spring Cloud Gateway — JWT 검증, 헤더 주입, 라우팅
+├── discovery-service/       # Eureka — 서비스 디스커버리
+├── user-service/            # 회원 — OAuth(카카오/네이버/구글/애플), JWT, 리프레시 토큰 회전
+├── branch-service/          # 지점·직원 — 권한 관리, S3 이미지 업로드, Swagger API 문서
+├── workpay-service/         # 급여 정산 + 스케줄 — DDD Value Object, 수당/공제, 급여 확정
+├── billing-service/         # 구독 결제 — 토스페이먼츠 빌링키, 보상 트랜잭션, 결제 원장
+├── notification-service/    # 알림 — FCM 푸시, BizM 알림톡, Email (RabbitMQ 비동기)
+├── docs/                    # 설계 문서, 트러블슈팅 기록
+├── portfolio-examples/      # 핵심 패턴 코드 예시 (money-vo 등)
+├── docker-compose.yml       # 전체 서비스 + 인프라 컨테이너 정의
+└── deploy-canary.sh         # 카나리 무중단 배포 스크립트
+```
+
+<br>
+
+## 주요 성과 요약
+
+| 항목 | Before | After |
+|------|--------|-------|
+| 급여 관련 문의 | "왜 이 금액이냐" 반복 | 0건 — 계산 근거 구조화 + 확정 시점 스냅샷 보존 |
+| 스케줄-급여 데이터 누락율 | 3.44% (Kafka/Outbox 분리 구조) | 0% — 도메인 통합 + 단일 트랜잭션 |
+| 결제↔DB 불일치율 | ~30% (Chaos 테스트, 30% DB 장애 주입) | 0% — 보상 트랜잭션으로 자동 복구 |
+| 급여 API 응답시간 | 3.2초 (N+1 쿼리 ~954회) | 198ms — 배치 전환으로 I/O 97% 절감 |
+| 배포 중 다운타임 | 5~10분 | 무중단 — 카나리 배포 + 자동 롤백 |
+| 테스트 | 없음 | 3계층 자동 검증 (도메인 단위 · 유저 시나리오 · DTO 호환성) |
+| 알림 응답시간 (최악) | 5초 (외부 API 타임아웃) | 50ms — RabbitMQ 비동기 분리 |
+| CS 에러 특정 시간 | 20분 | 1분 — Prometheus + Grafana + Loki |
 
 <br>
 
@@ -30,21 +177,6 @@
 | 원본 레포 (Private) | [github.com/hancrysta1/Server](https://github.com/hancrysta1/Server) |
 | 직원용 앱 | <!-- 앱스토어 링크 --> |
 | 사장용 웹 | <!-- 웹 서비스 URL --> |
-
-<br>
-
-### 코드 예시 및 발췌.
-
-| 폴더 | 내용 | 실행 |
-|------|------|------|
-| [money-vo/](./money-vo/) | 급여 계산 Value Object + Domain Model | `./gradlew test` — 22개 테스트 |
-| [atomic-token-rotation/](./atomic-token-rotation/) | Refresh Token 검증+회전 원자적 트랜잭션 | 코드 발췌 |
-| [transaction-boundary/](./transaction-boundary/) | MANDATORY 전파 + 외부 호출 실패 격리 | 코드 발췌 |
-| [payment-consistency/](./payment-consistency/) | 보상 트랜잭션 + Append-Only 원장 + 멱등성 | 코드 발췌 |
-| [canary-deploy/](./canary-deploy/) | 7단계 카나리 무중단 배포 셸 스크립트 | 코드 원본 |
-| [feign-contract-test/](./feign-contract-test/) | 서비스 간 DTO 호환성 자동 검증 | 코드 원본 |
-| [query-optimization/](./query-optimization/) | N+1 → 배치 전환 Before/After | 코드 발췌 |
-| [github-actions/](./github-actions/) | CI/CD 파이프라인 (변경 감지 → 계약 검증 → 빌드 → 테스트 → 배포) | 구조 요약 |
 
 <br>
 <br>
@@ -395,6 +527,10 @@ PR to main
 | [atomic-token-rotation/](./atomic-token-rotation/) | Refresh Token 검증+회전 원자적 트랜잭션 + 비관적 락 | 코드 발췌 |
 | [transaction-boundary/](./transaction-boundary/) | MANDATORY 전파 + 외부 호출 실패 격리 (try-catch) | 코드 발췌 |
 | [payment-consistency/](./payment-consistency/) | 보상 트랜잭션 + Append-Only 결제 원장 + 멱등성 | 코드 발췌 |
+| [canary-deploy/](./canary-deploy/) | 7단계 카나리 무중단 배포 셸 스크립트 | 코드 원본 |
+| [feign-contract-test/](./feign-contract-test/) | 서비스 간 DTO 호환성 자동 검증 | 코드 원본 |
+| [query-optimization/](./query-optimization/) | N+1 → 배치 전환 Before/After | 코드 발췌 |
+| [github-actions/](./github-actions/) | CI/CD 파이프라인 (변경 감지 → 계약 검증 → 빌드 → 테스트 → 배포) | 구조 요약 |
 
 <br>
 <br>
