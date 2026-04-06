@@ -1,5 +1,8 @@
 # 운영 서버 장애 진단 및 근본 원인 해결
 
+관련 블로그 글: https://velog.io/@hansjour/Server-EC2%EA%B0%80-%EC%9E%90%EA%BE%B8-%EC%A3%BD%EC%96%B4%EC%9A%94-%ED%95%B4%EA%B2%B0-%EA%B3%BC%EC%A0%95-%EA%B8%B0%EB%A1%9D-StatusCheckFailed
+
+
 ## 문제
 
 운영 중인 EC2 인스턴스에서 두 가지 장애가 발생했다.
