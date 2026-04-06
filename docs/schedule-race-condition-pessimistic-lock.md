@@ -1,5 +1,8 @@
 # 스케줄 수정 Race Condition 해결 — 비관적 락 + MANDATORY 전파
 
+관련 블로그 글: https://velog.io/@hansjour/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8-Transactional-%EC%A0%84%ED%8C%8C-%EC%86%8D%EC%84%B1%EC%9C%BC%EB%A1%9C-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EC%A0%9C%EC%96%B4%ED%95%98%EA%B8%B0
+
+
 ## 문제
 
 스케줄이 수정되면 해당 날짜의 급여도 현재 시급 기준으로 재계산되어야 한다. 이때 기존 급여를 UPDATE하지 않고 DELETE → 재계산 → INSERT 방식을 사용한다. 이 구조에서 두 가지 동시성/트랜잭션 문제가 발생했다.
