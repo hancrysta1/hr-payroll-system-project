@@ -436,6 +436,7 @@ PR to main
 | 주제 | Before → After | 문서 |
 |------|----------------|------|
 | 스케줄-급여 데이터 누락 | 3.44% → 0% (도메인 통합 + 단일 트랜잭션) | [도메인 경계 재설정](docs/domain-boundary-data-loss-3-to-0.md) |
+| 스케줄 수정 Race Condition | DELETE→INSERT 동시 요청 시 데이터 소실 → 비관적 락 + MANDATORY 전파 | [스케줄 Race Condition 해결](docs/schedule-race-condition-pessimistic-lock.md) |
 | Refresh Token 레이스 컨디션 | 동시 요청 시 401 → 비관적 락 + 원자적 트랜잭션 | [레이스 컨디션 해결](docs/refresh-token-race-condition.md) |
 | 급여 API 응답시간 | 3.2초 → 198ms (N+1 → 배치, I/O 97% 절감) | [쿼리 최적화](docs/query-optimization-94-percent.md) |
 | 알림 응답시간 | 5초 → 50ms (RabbitMQ 비동기 분리, 99% 개선) | [알림 통합](docs/notification-integration-99-percent.md) |
