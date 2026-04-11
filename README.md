@@ -403,6 +403,7 @@ Phase 7  태그 전환
 
 <!-- 캡쳐: CI에서 잡힌 에러 로그 -->
 <img width="800" height="657" alt="O Search loot" src="https://github.com/user-attachments/assets/9eeb2bee-e8ad-4e03-8e8c-944e5fc2e341" />
+<img width="800" height="642" alt="image" src="https://github.com/user-attachments/assets/a1aba265-539c-43c7-8a4e-dead38919fbb" />
 
 
 ```
