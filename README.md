@@ -399,8 +399,9 @@ Phase 7  태그 전환
 | 컨트롤러 | API 요청/응답 | MockMvc standaloneSetup |
 | Feign 계약 | 서비스 간 DTO 호환성 | Provider DTO → JSON 자동 생성 → Consumer 역직렬화 검증 |
 
-### 3) CI 파이프라인에서 배포 전 차단
+<br>
 
+### 3) CI 파이프라인에서 배포 전 차단
 <!-- 캡쳐: CI에서 잡힌 에러 로그 -->
 <img width="800" height="657" alt="O Search loot" src="https://github.com/user-attachments/assets/9eeb2bee-e8ad-4e03-8e8c-944e5fc2e341" />
 <img width="800" height="642" alt="image" src="https://github.com/user-attachments/assets/a1aba265-539c-43c7-8a4e-dead38919fbb" />
@@ -409,12 +410,12 @@ Phase 7  태그 전환
 ```
 PR to main
   → 변경된 서비스 감지 (7개 중 변경분만)
-  → Feign DTO 호환성 검증 (어떤 서비스가 바뀌든 항상 실행)
+  → Feign DTO 호환성 검증 (변경된 서비스의 API를 호출하는 모든 서비스를 함께 컴파일하여 시그니처 불일치를 머지 전 차단)
   → 빌드 + 테스트 (실패 시 머지 차단)
   → Docker 이미지 빌드
 ```
 
-배포 전 CI에서 알림 메서드 시그니처 변경이 잡힌 것을 계기로, `@Transactional` 안 외부 호출이 핵심 기능을 롤백시키는 구조를 발견 → 9곳 try-catch로 격리.
+알림 서비스 DTO 시그니처를 변경한 PR에서 호출 측 컴파일 에러를 CI가 머지 전 차단. 수정 과정에서 알림 호출이 회원가입/결제 등 핵심 트랜잭션 `@Transactional` 안에 들어가 있어, 외부 의존성(알림) 실패가 본 비즈니스 트랜잭션을 롤백시킬 수 있는 구조임을 발견. 알림 호출 9곳을 try-catch로 격리하여 외부 의존성 실패와 핵심 비즈니스 로직을 분리.
 
 ---
 
@@ -424,10 +425,11 @@ PR to main
 |---|---|---|
 | 배포 중 다운타임 | 5~10분 | 무중단 (카나리, 자동 롤백) |
 | 배포 시간 | 13분 31초 | 3분 24초 |
-| 테스트 | 없음 | 3계층 자동 검증 — 도메인 단위 + 유저 시나리오 + DTO 호환성 |
+| 테스트 | CI 미연동 (테스트 부재) | 3계층 자동 검증 — 도메인 단위 + 유저 시나리오 + DTO 호환성 |
 | 서비스 간 DTO 불일치 | 배포 후 런타임 장애 | PR 시점 자동 감지 |
 
 > 상세 문서. [CI 테스트 자동화](docs/ci-test-3-layer-validation.md) · [테스트 전략](docs/test-strategy-unit-to-scenario.md) · [카나리 무중단 배포](docs/canary-deploy-zero-downtime.md)
+
 
 <br>
 <br>
