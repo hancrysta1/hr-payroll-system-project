@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="WorkMinutes — 근무시간은 제약 조건을 가진다" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-03-31T13:23:51.174Z" hostname="hancrystalui-MacBookAir.local" time="0.01">
+<testsuite name="WorkMinutes — 근무시간은 제약 조건을 가진다" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-04-21T09:15:11.300Z" hostname="hancrystalui-MacBookAir.local" time="0.012">
   <properties/>
-  <testcase name="음수는 거부한다" classname="example.salary.MoneyVoTest$WorkMinutesTest" time="0.007"/>
-  <testcase name="정확히 8시간 → 초과 아님" classname="example.salary.MoneyVoTest$WorkMinutesTest" time="0.0"/>
-  <testcase name="8시간 초과 → 연장수당 대상" classname="example.salary.MoneyVoTest$WorkMinutesTest" time="0.0"/>
-  <testcase name="8시간 이하 → 연장수당 없음" classname="example.salary.MoneyVoTest$WorkMinutesTest" time="0.0"/>
+  <testcase name="음수는 거부한다" classname="example.salary.MoneyVoTest$WorkMinutesTest" time="0.006"/>
+  <testcase name="정확히 8시간 → 초과 아님" classname="example.salary.MoneyVoTest$WorkMinutesTest" time="0.001"/>
+  <testcase name="8시간 초과 → 연장수당 대상" classname="example.salary.MoneyVoTest$WorkMinutesTest" time="0.002"/>
+  <testcase name="8시간 이하 → 연장수당 없음" classname="example.salary.MoneyVoTest$WorkMinutesTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

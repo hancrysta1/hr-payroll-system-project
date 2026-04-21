@@ -461,7 +461,10 @@ PR to main
 
 | 폴더 | 내용 | 실행 |
 |------|------|------|
-| [money-vo/](./money-vo/) | 급여 계산 Value Object (Money, WorkMinutes, Percentage, HourlyWage) + Domain Model (DailySalaryCalculation) | `./gradlew test` — 22개 테스트, 3초 |
+| [money-vo/](./money-vo/) | 급여 도메인 단일 모듈 — VO(Money, WorkMinutes, Percentage, HourlyWage), [engine/](./money-vo/src/main/java/example/salary/engine)(PayrollEngine, AllowanceCalc, NightWorkCalc), [rates/](./money-vo/src/main/java/example/salary/rates)(연도별 요율 레지스트리 + 세율 JSON 로더), 모델·정책 | `./gradlew test` |
+| [payroll-adapter-pattern/](./payroll-adapter-pattern/) | 서비스↔엔진 어댑터 (V1 fallback 브랜칭, 도메인→DTO 변환) | 코드 발췌 |
+| [payroll-v1v2-integration-test/](./payroll-v1v2-integration-test/) | H2 통합 테스트로 V1↔V2 급여 계산 결과 동등성 검증 | 코드 발췌 |
+| [schedule-locking-pattern/](./schedule-locking-pattern/) | JPA PESSIMISTIC_WRITE 락 + 대타 요청 만료 정리 스케줄러 | 코드 발췌 |
 | [atomic-token-rotation/](./atomic-token-rotation/) | Refresh Token 검증+회전 원자적 트랜잭션 + 비관적 락 | 코드 발췌 |
 | [transaction-boundary/](./transaction-boundary/) | MANDATORY 전파 + 외부 호출 실패 격리 (try-catch) | 코드 발췌 |
 | [payment-consistency/](./payment-consistency/) | 보상 트랜잭션 + Append-Only 결제 원장 + 멱등성 | 코드 발췌 |

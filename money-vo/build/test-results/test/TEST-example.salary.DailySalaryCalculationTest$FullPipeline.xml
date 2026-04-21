@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="전체 파이프라인 — DB에서 시급/설정/가산율 조회 → 계산 → 결과" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-03-31T13:23:51.084Z" hostname="hancrystalui-MacBookAir.local" time="0.027">
+<testsuite name="전체 파이프라인 — DB에서 시급/설정/가산율 조회 → 계산 → 결과" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-04-21T09:15:11.201Z" hostname="hancrystalui-MacBookAir.local" time="0.056">
   <properties/>
-  <testcase name="시급(DB) + 야간수당(설정 ON, 가산율 50%) + 세금(3.3%)" classname="example.salary.DailySalaryCalculationTest$FullPipeline" time="0.027"/>
+  <testcase name="시급(DB) + 야간수당(설정 ON, 가산율 50%) + 세금(3.3%)" classname="example.salary.DailySalaryCalculationTest$FullPipeline" time="0.056"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
