@@ -510,3 +510,11 @@ billing-service 예시
 | 매직넘버 | `480`, `12540`, `0.033` 등 산재 | 도메인 상수로 의미 부여 |
 | 도메인 용어 | 코드에서 추론해야 함 | `exceedsDailyLimit()`, `isUsable()` 등 명시적 |
 | 서비스 간 일관성 | 없음 | 각 도메인 특성에 맞는 DDD 패턴 적용 |
+
+---
+
+## 연결 — 이후 빌드 단위 분리로 확장
+
+VO·Domain Model로 계산 로직이 Spring 의존 없는 순수 Java가 되자, 이 순수 도메인을 **별도 Gradle 모듈(payroll-compute)** 로 떼어낼 수 있는 전제가 생겼다. 모듈 분리 이후 테스트 실행 시간·변경 영향 범위·빌드 격리 측면에서의 정량적 효과는 별도 문서에 측정.
+
+→ [모듈 분리를 통한 테스트 실행 최적화](./module-separation-test-optimization.md)

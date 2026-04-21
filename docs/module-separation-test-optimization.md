@@ -2,6 +2,8 @@
 
 > 원본 서비스(`Server`)의 `payroll-compute`(급여 계산 엔진) / `workpay-service`(근태·급여 서비스) **2-모듈 구조**에서 측정한 회고 문서.
 > 본 포트폴리오 레포는 요약용 단일 모듈(`money-vo`)로 통합되어 있으며, 이 문서는 원본 서비스의 설계 결정 근거를 기록한 것.
+>
+> 전제: VO·Domain Model 리팩토링으로 계산 로직이 Spring 의존 없는 순수 Java가 된 덕분에 별도 Gradle 모듈 분리가 가능했음. 코드 수준 리팩토링 배경은 → [급여 도메인 DDD 리팩토링](./ddd-refactoring-value-object.md)
 
 ## 측정 환경
 
