@@ -444,6 +444,7 @@ PR to main
 | Refresh Token 레이스 컨디션 | 동시 갱신 시 토큰 폐기 충돌 → SELECT FOR UPDATE로 동시 접근 직렬화 | [레이스 컨디션 해결](docs/refresh-token-race-condition.md) |
 | 스케줄 수정 동시성 이슈 | 스케줄·급여가 별도 트랜잭션으로 실행되어 부분 롤백 발생 → MANDATORY 전파로 호출자 트랜잭션 참여 강제 | [스케줄 Race Condition 해결](docs/schedule-race-condition-pessimistic-lock.md) |
 | 급여 API 응답시간 | 3.2초 → 198ms (N+1 → 배치, I/O 97% 절감) | [쿼리 최적화](docs/query-optimization-94-percent.md) |
+| 테스트 실행 시간 (급여 엔진 변경 시) | 38초 → 6.21초 (84% 단축, 2-모듈 분리 + 변경 영향 한정 실행) | [모듈 분리 테스트 최적화](docs/module-separation-test-optimization.md) |
 | 알림 응답시간 | 5초 → 50ms (RabbitMQ 비동기 분리, 99% 개선) | [알림 통합](docs/notification-integration-99-percent.md) |
 | CS 에러 특정 | 20분 → 1분 (Prometheus + Grafana + Loki) | [모니터링 구축](docs/monitoring-prometheus-grafana-loki.md) |
 | OpenAI API | 비용 46% 절감, 60초 → 1.8초 | [AI 최적화](docs/openai-cost-46-percent-reduction.md) |
